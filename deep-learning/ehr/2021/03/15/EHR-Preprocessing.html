@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>EHR Preprocessing | fastpages</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="EHR Preprocessing" />
+<meta name="author" content="Vinod" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A post about preprocessing EHR data for Deep Learning." />
+<meta property="og:description" content="A post about preprocessing EHR data for Deep Learning." />
+<link rel="canonical" href="https://corazonlabs.github.io/blog/deep-learning/ehr/2021/03/15/EHR-Preprocessing.html" />
+<meta property="og:url" content="https://corazonlabs.github.io/blog/deep-learning/ehr/2021/03/15/EHR-Preprocessing.html" />
+<meta property="og:site_name" content="fastpages" />
+<meta property="og:image" content="https://corazonlabs.github.io/blog/images/chart-preview.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-03-15T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://corazonlabs.github.io/blog/deep-learning/ehr/2021/03/15/EHR-Preprocessing.html","@type":"BlogPosting","headline":"EHR Preprocessing","dateModified":"2021-03-15T00:00:00-05:00","datePublished":"2021-03-15T00:00:00-05:00","image":"https://corazonlabs.github.io/blog/images/chart-preview.png","author":{"@type":"Person","name":"Vinod"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://corazonlabs.github.io/blog/deep-learning/ehr/2021/03/15/EHR-Preprocessing.html"},"description":"A post about preprocessing EHR data for Deep Learning.","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://corazonlabs.github.io/blog/feed.xml" title="fastpages" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">fastpages</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">EHR Preprocessing</h1><p class="page-description">A post about preprocessing EHR data for Deep Learning.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-03-15T00:00:00-05:00" itemprop="datePublished">
+        Mar 15, 2021
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Vinod</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      1 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#deep-learning">deep-learning</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/blog/categories/#ehr">ehr</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          <div class="px-2">
+
+    <a href="https://github.com/corazonlabs/blog/tree/master/_notebooks/2021-03-15-EHR-Preprocessing.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/blog/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/corazonlabs/blog/master?filepath=_notebooks%2F2021-03-15-EHR-Preprocessing.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/blog/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/corazonlabs/blog/blob/master/_notebooks/2021-03-15-EHR-Preprocessing.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/blog/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h1"><a href="#About">About </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#EHR">EHR </a></li>
+<li class="toc-entry toc-h2"><a href="#Synthea">Synthea </a></li>
+<li class="toc-entry toc-h2"><a href="#Labels">Labels </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Cleaning">Cleaning </a>
+<ul>
+<li class="toc-entry toc-h2"><a href="#Inserting-Age">Inserting Age </a></li>
+<li class="toc-entry toc-h2"><a href="#Extracting-Labels">Extracting Labels </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h1"><a href="#Creating-Vocab">Creating Vocab </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-03-15-EHR-Preprocessing.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="About">
+<a class="anchor" href="#About" aria-hidden="true"><span class="octicon octicon-link"></span></a>About<a class="anchor-link" href="#About"> </a>
+</h1>
+<h2 id="EHR">
+<a class="anchor" href="#EHR" aria-hidden="true"><span class="octicon octicon-link"></span></a>EHR<a class="anchor-link" href="#EHR"> </a>
+</h2>
+<ul>
+<li>most popular are MIMIC and now eICU</li>
+</ul>
+<p><strong>FHIR</strong></p>
+<ul>
+<li>What is it</li>
+<li>I chose this because it is a canonical format</li>
+</ul>
+<h2 id="Synthea">
+<a class="anchor" href="#Synthea" aria-hidden="true"><span class="octicon octicon-link"></span></a>Synthea<a class="anchor-link" href="#Synthea"> </a>
+</h2>
+<ul>
+<li>What is it + how-tos</li>
+<li>I used varying sizes - all MA for now</li>
+<li>Data dictionary</li>
+</ul>
+<h2 id="Labels">
+<a class="anchor" href="#Labels" aria-hidden="true"><span class="octicon octicon-link"></span></a>Labels<a class="anchor-link" href="#Labels"> </a>
+</h2>
+<ul>
+<li>Most models use in-patient mortality, readmission, prolonged length of stay etc because they are hospitalization or ICU datasets</li>
+<li>I chose to predict chronic conditions instead for the following reasons<ul>
+<li>Given the nature of Synthea dataset (i.e. simulating standard (all) events over a lifetime not just hospitalization) </li>
+<li>Also given chronic conditions account for the majority of US healthcare costs</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Cleaning">
+<a class="anchor" href="#Cleaning" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cleaning<a class="anchor-link" href="#Cleaning"> </a>
+</h1>
+<ul>
+<li>First split by patient ids</li>
+<li>So as to isolate other records based on pt ids
+## Other cleaning
+Mostly standard stuff, standardizing column names etc.
+Dropped Encounters - 
+Code Tables
+To create vocabularies
+Identifying START and STOP
+Observations is a little more complex than the rest</li>
+</ul>
+<h2 id="Inserting-Age">
+<a class="anchor" href="#Inserting-Age" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inserting Age<a class="anchor-link" href="#Inserting-Age"> </a>
+</h2>
+<ul>
+<li>Years and months for now (given the nature of the Synthea dataset)</li>
+<li>Hours or Days  as age are possible in more granular data - e.g. ICU or hospitalization<ul>
+<li>where we are trying to predict outcomes within say 24 or 48 hours after admission</li>
+<li>Also as we'll see in upcoming posts, age allows some flexibility<ul>
+<li>Initially everything started at age 0</li>
+<li>With a little change, I am now able to get any arbitrary age span - say month 24 to month 104 or 20 to 40 years</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Extracting-Labels">
+<a class="anchor" href="#Extracting-Labels" aria-hidden="true"><span class="octicon octicon-link"></span></a>Extracting Labels<a class="anchor-link" href="#Extracting-Labels"> </a>
+</h2>
+<ul>
+<li>Extract them from the conditions df and put in patients df for ease of use later</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Creating-Vocab">
+<a class="anchor" href="#Creating-Vocab" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Vocab<a class="anchor-link" href="#Creating-Vocab"> </a>
+</h1>
+<ul>
+<li>A note about EmbeddingBag and Embedding<ul>
+<li>The difference</li>
+<li>The idea of representing a time period with EmbeddingBag (as described in the Google paper)</li>
+</ul>
+</li>
+<li>Implementation - Vocab classes<ul>
+<li>EhrVocab class</li>
+<li>ObsVocab class - Observations vocab is special</li>
+<li>Demographics vocab is different</li>
+<li>Vocablist class</li>
+</ul>
+</li>
+<li>Tried to use fastai Vocab, but this required quite a bit of customization, so wrote another one on similar lines</li>
+<li>Emb Matrix Dimensions - a convenience fn to get the dimensions as this is needed during creation of the models</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="corazonlabs/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/deep-learning/ehr/2021/03/15/EHR-Preprocessing.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>An easy to use blogging platform with support for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/fastai" title="fastai"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/fastdotai" title="fastdotai"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
